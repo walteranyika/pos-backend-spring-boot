@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/pos")
+@RequestMapping("/sales")
 class PosController(private val posService: PosService) {
 
-    @PostMapping("/sales")
-    fun createSale(@RequestBody request: CreateSaleRequest, @AuthenticationPrincipal user: User): ResponseEntity<SaleResponse> {
+    @PostMapping("/create-pos")
+    fun createSale(
+        @RequestBody request: CreateSaleRequest,
+        @AuthenticationPrincipal user: User
+    ): ResponseEntity<SaleResponse> {
         val saleResponse = posService.createSale(request, user)
         return ResponseEntity(saleResponse, HttpStatus.CREATED)
     }
