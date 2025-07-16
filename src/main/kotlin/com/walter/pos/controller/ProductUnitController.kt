@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.*
 class ProductUnitController(private val unitService: ProductUnitService) {
 
     @GetMapping
-    fun getAllUnits(): List<ProductUnitResponse> = unitService.getAllUnits()
-
+    fun getUnits(@RequestParam(name = "q", required = false) query: String?): List<ProductUnitResponse> {
+        return if (query.isNullOrBlank()) {
+            unitService.getAllUnits()
+        } else {
+            unitService.searchUnits(query)
+        }
+    }
     @GetMapping("/{id}")
     fun getUnitById(@PathVariable id: Int): ProductUnitResponse = unitService.getUnitById(id)
 

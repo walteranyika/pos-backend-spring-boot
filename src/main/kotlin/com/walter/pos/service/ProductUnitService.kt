@@ -35,6 +35,8 @@ class ProductUnitService(private val unitRepository: ProductUnitRepository) {
         }
         unitRepository.deleteById(id)
     }
+    fun searchUnits(query: String): List<ProductUnitResponse> =
+        unitRepository.search(query).map { it.toResponse() }
 
     internal fun findUnitById(id: Int): ProductUnit =
         unitRepository.findById(id)

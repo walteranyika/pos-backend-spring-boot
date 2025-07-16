@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.*
 class CategoryController(private val categoryService: CategoryService) {
 
     @GetMapping
-    fun getAllCategories(): List<CategoryResponse> = categoryService.getAllCategories()
-
+    fun getCategories(@RequestParam(name = "q", required = false) query: String?): List<CategoryResponse> {
+        return if (query.isNullOrBlank()) {
+            categoryService.getAllCategories()
+        } else {
+            categoryService.searchCategories(query)
+        }
+    }
     @GetMapping("/{id}")
     fun getCategoryById(@PathVariable id: Int): CategoryResponse = categoryService.getCategoryById(id)
 

@@ -16,10 +16,7 @@ class ProductController(private val productService: ProductService) {
         @RequestParam(name = "q", required = false) query: String?,
         @RequestParam(name = "categoryId", required = false) categoryId: Int?
     ): List<ProductResponse> {
-        val isSearchingOrFiltering = !query.isNullOrBlank() || categoryId != null
-        return if (isSearchingOrFiltering) {
-            productService.searchProducts(query?.trim(), categoryId)
-        } else productService.getAllProducts()
+        return productService.searchProducts(query?.trim(), categoryId)
     }
 
     @GetMapping("/{id}")

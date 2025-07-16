@@ -14,6 +14,9 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
     fun getAllCategories(): List<CategoryResponse> =
         categoryRepository.findAll().map { it.toResponse() }
 
+    fun searchCategories(query: String): List<CategoryResponse> =
+        categoryRepository.search(query).map { it.toResponse() }
+
     fun getCategoryById(id: Int): CategoryResponse =
         findCategoryById(id).toResponse()
 
