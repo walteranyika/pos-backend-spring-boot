@@ -9,6 +9,7 @@ import com.walter.pos.entities.Category
 import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
 import com.walter.pos.exceptions.ResourceNotFoundException
+import com.walter.pos.mappers.toResponse
 import com.walter.pos.repository.ProductRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -108,7 +109,7 @@ class ProductService(
         createdAt = this.createdAt,
         updatedAt = this.updatedAt
     )
-    // We need mappers for the nested objects as well
-    private fun ProductUnit.toResponse() = ProductUnitResponse(this.id, this.name, this.shortName)
-    private fun Category.toResponse() = CategoryResponse(this.id, this.name, this.code)
+
+    fun searchProducts(query: String?, categoryId: Int?): List<ProductResponse> =
+        productRepository.searchAndFilter(query, categoryId).map { it.toResponse() }
 }

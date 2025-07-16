@@ -4,6 +4,7 @@ import com.walter.pos.dtos.CategoryRequest
 import com.walter.pos.dtos.CategoryResponse
 import com.walter.pos.entities.Category
 import com.walter.pos.exceptions.ResourceNotFoundException
+import com.walter.pos.mappers.toResponse
 import com.walter.pos.repository.CategoryRepository
 import org.springframework.stereotype.Service
 
@@ -40,11 +41,4 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
         categoryRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Category with ID $id not found.") }
 
-    private fun Category.toResponse() = CategoryResponse(
-        id = this.id,
-        name = this.name,
-        code = this.code,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt
-    )
 }

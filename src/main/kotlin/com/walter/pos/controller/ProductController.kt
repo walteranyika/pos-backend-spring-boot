@@ -12,7 +12,15 @@ import org.springframework.web.bind.annotation.*
 class ProductController(private val productService: ProductService) {
 
     @GetMapping
-    fun getAllProducts(): List<ProductResponse> = productService.getAllProducts()
+    fun getProducts(
+        @RequestParam(name = "q", required = false) query: String?,
+        @RequestParam(name = "categoryId", required = false) categoryId: Int?
+    ): List<ProductResponse> {
+        val isSearchingOrFiltering = !query.isNullOrBlank() || categoryId != null
+        return if (isSearchingOrFiltering) {
+            productService.searchProducts(query?.trim(), categoryId)
+        } else productService.getAllProducts()
+    }
 
     @GetMapping("/{id}")
     fun getProductById(@PathVariable id: Int): ProductResponse = productService.getProductById(id)
