@@ -20,7 +20,7 @@ class CategoryController(private val categoryService: CategoryService) {
         }
     }
     @GetMapping("/{id}")
-    fun getCategoryById(@PathVariable id: Int): CategoryResponse = categoryService.getCategoryById(id)
+    fun getCategoryById(@PathVariable id: Long): CategoryResponse = categoryService.getCategoryById(id)
 
     @PostMapping
     fun createCategory(@RequestBody request: CategoryRequest): ResponseEntity<CategoryResponse> {
@@ -29,10 +29,10 @@ class CategoryController(private val categoryService: CategoryService) {
     }
 
     @PutMapping("/{id}")
-    fun updateCategory(@PathVariable id: Int, @RequestBody request: CategoryRequest): CategoryResponse =
+    fun updateCategory(@PathVariable id: Long, @RequestBody request: CategoryRequest): CategoryResponse =
         categoryService.updateCategory(id, request)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteCategory(@PathVariable id: Int) = categoryService.deleteCategory(id)
+    fun deleteCategory(@PathVariable id: Long) = categoryService.deleteCategory(id)
 }

@@ -16,7 +16,8 @@ class PosService(
     private val productRepository: ProductRepository,
     private val saleRepository: SaleRepository,
     private val saleDetailRepository: SaleDetailRepository,
-    private val paymentSaleRepository: PaymentSaleRepository
+    private val paymentSaleRepository: PaymentSaleRepository,
+    private val stockService: StockService
 ) {
 
     @Transactional
@@ -71,6 +72,7 @@ class PosService(
         }
         val savedSaleDetails = saleDetailRepository.saveAll(saleDetailsToSave)
 
+
         // 5. Create PaymentSale entities if any payment was made
         val savedPayments = if (paidAmount > BigDecimal.ZERO) {
             val paymentsToSave = request.payments.map {
@@ -87,7 +89,10 @@ class PosService(
             emptyList()
         }
 
-        // In a real-world scenario, you would also update product stock levels here.
+        //update product stock levels here.
+        savedSaleDetails.forEach {
+                item -> stockService.reduceStock(item.product.id, item.quantity)
+        }
 
         // 6. Construct and return the response DTO
         return savedSale.toResponse(savedSaleDetails, savedPayments)

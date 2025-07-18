@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 // --- Request DTOs ---
 
 data class SaleItemRequest(
-    val productId: Int,
+    val productId: Long,
     val quantity: BigDecimal,
     val price: BigDecimal, // The unit price at the time of sale
     val discount: BigDecimal = BigDecimal.ZERO // Item-specific discount
@@ -42,7 +42,7 @@ data class PaymentSaleResponse(
 )
 
 data class SaleResponse(
-    val id: Int,
+    val id: Long,
     val ref: String,
     val grandTotal: BigDecimal,
     val discount: BigDecimal, // Overall sale discount

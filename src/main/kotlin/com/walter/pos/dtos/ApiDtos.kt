@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 // --- Category DTOs ---
 data class CategoryResponse(
-    val id: Int,
+    val id: Long,
     val name: String,
     val code: String,
     val createdAt: LocalDateTime?=null,
@@ -19,7 +19,7 @@ data class CategoryRequest(
 
 // --- Unit DTOs ---
 data class ProductUnitResponse(
-    val id: Int,
+    val id: Long,
     val name: String,
     val shortName: String,
     val createdAt: LocalDateTime?=null,
@@ -33,7 +33,7 @@ data class ProductUnitRequest(
 
 // --- Product DTOs ---
 data class ProductResponse(
-    val id: Int,
+    val id: Long,
     val code: String,
     val name: String,
     val barcode: String?,
@@ -43,6 +43,7 @@ data class ProductResponse(
     val saleUnit: ProductUnitResponse,
     val purchaseUnit: ProductUnitResponse,
     val stockAlert: BigDecimal,
+    val quantity: BigDecimal,
     val category: CategoryResponse,
     val taxMethod: TaxType,
     val image: String?,
@@ -59,10 +60,10 @@ data class ProductRequest(
     val cost: BigDecimal,
     val price: BigDecimal,
     val isVariablePriced: Boolean,
-    val saleUnitId: Int,
-    val purchaseUnitId: Int,
+    val saleUnitId: Long,
+    val purchaseUnitId: Long,
     val stockAlert: BigDecimal,
-    val categoryId: Int,
+    val categoryId: Long,
     val taxMethod: TaxType,
     val image: String?,
     val isActive: Boolean,

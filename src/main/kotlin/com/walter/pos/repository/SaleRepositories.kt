@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SaleRepository : JpaRepository<Sale, Int>, JpaSpecificationExecutor<Sale>
+interface SaleRepository : JpaRepository<Sale, Long>, JpaSpecificationExecutor<Sale>
 
 @Repository
-interface SaleDetailRepository : JpaRepository<SaleItem, Int>
+interface SaleDetailRepository : JpaRepository<SaleItem, Long>
 
 @Repository
-interface PaymentSaleRepository : JpaRepository<PaymentSale, Int>
+interface PaymentSaleRepository : JpaRepository<PaymentSale, Long>

@@ -1,6 +1,7 @@
 package com.walter.pos.exceptions
 
 import com.walter.pos.dtos.ErrorResponse
+import io.jsonwebtoken.MalformedJwtException
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
@@ -63,6 +64,26 @@ class GlobalExceptionHandler {
         )
         return ResponseEntity(errorDetails, HttpStatus.UNAUTHORIZED)
     }
+
+    @ExceptionHandler(MalformedJwtException::class)
+    fun handleJwtMalformedException(
+        ex: MalformedJwtException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val path = (request as ServletWebRequest).request.requestURI
+
+        logger.warn("MalformedJwtException Token '{}': {}", path, ex.message)
+
+        val errorDetails = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.FORBIDDEN.value(),
+            error = "Invalid Token",
+            message = ex.message ?: "Invalid Token.",
+            path = path
+        )
+        return ResponseEntity(errorDetails, HttpStatus.FORBIDDEN)
+    }
+
 
     /**
      * Handles database integrity constraint violations, such as duplicate unique keys.

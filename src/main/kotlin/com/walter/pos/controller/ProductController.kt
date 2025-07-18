@@ -14,13 +14,13 @@ class ProductController(private val productService: ProductService) {
     @GetMapping
     fun getProducts(
         @RequestParam(name = "q", required = false) query: String?,
-        @RequestParam(name = "categoryId", required = false) categoryId: Int?
+        @RequestParam(name = "categoryId", required = false) categoryId: Long?
     ): List<ProductResponse> {
         return productService.searchProducts(query?.trim(), categoryId)
     }
 
     @GetMapping("/{id}")
-    fun getProductById(@PathVariable id: Int): ProductResponse = productService.getProductById(id)
+    fun getProductById(@PathVariable id: Long): ProductResponse = productService.getProductById(id)
 
     @PostMapping
     fun createProduct(@RequestBody request: ProductRequest): ResponseEntity<ProductResponse> {
@@ -29,10 +29,10 @@ class ProductController(private val productService: ProductService) {
     }
 
     @PutMapping("/{id}")
-    fun updateProduct(@PathVariable id: Int, @RequestBody request: ProductRequest): ProductResponse =
+    fun updateProduct(@PathVariable id: Long, @RequestBody request: ProductRequest): ProductResponse =
         productService.updateProduct(id, request)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteProduct(@PathVariable id: Int) = productService.deleteProduct(id)
+    fun deleteProduct(@PathVariable id: Long) = productService.deleteProduct(id)
 }

@@ -13,17 +13,30 @@ import com.walter.pos.mappers.toResponse
 import com.walter.pos.repository.ProductRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 
 @Service
 class ProductService(
     private val productRepository: ProductRepository,
     private val categoryService: CategoryService, // Reuse other services to find entities
-    private val unitService: ProductUnitService
+    private val unitService: ProductUnitService,
+    private val stockService: StockService,
 ) {
 
-    fun getAllProducts(): List<ProductResponse> = productRepository.findAll().map { it.toResponse() }
+    fun getAllProducts(): List<ProductResponse> {
+        val products = productRepository.findAll()
+        if (products.isEmpty()) {
+            return emptyList()
+        }
 
-    fun getProductById(id: Int): ProductResponse = findProductById(id).toResponse()
+        val productIds = products.map { it.id }
+
+        val stocks = stockService.getStocksForProducts(productIds)
+
+        return products.map { it.toResponse(stocks[it.id]?.quantity ?: BigDecimal.ZERO) }
+    }
+
+    fun getProductById(id: Long): ProductResponse = findProductById(id).toResponse()
 
     @Transactional
     fun createProduct(request: ProductRequest): ProductResponse {
@@ -48,16 +61,17 @@ class ProductService(
             isActive = request.isActive,
             note = request.note
         )
-        return productRepository.save(product).toResponse()
+        val savedProduct = productRepository.save(product)
+        stockService.createInitialStockForProduct(product)
+        return savedProduct.toResponse()
     }
 
     @Transactional
-    fun updateProduct(id: Int, request: ProductRequest): ProductResponse {
+    fun updateProduct(id: Long, request: ProductRequest): ProductResponse {
         val product = findProductById(id)
         val category = categoryService.findCategoryById(request.categoryId)
         val saleUnit = unitService.findUnitById(request.saleUnitId)
         val purchaseUnit = unitService.findUnitById(request.purchaseUnitId)
-
         // Update the product fields
         product.apply {
             this.code = request.code
@@ -78,38 +92,28 @@ class ProductService(
         return productRepository.save(product).toResponse()
     }
 
-    fun deleteProduct(id: Int) {
+    fun deleteProduct(id: Long) {
         if (!productRepository.existsById(id)) {
             throw ResourceNotFoundException("Product with ID $id not found.")
         }
         productRepository.deleteById(id)
     }
 
-    private fun findProductById(id: Int): Product =
+    private fun findProductById(id: Long): Product =
         productRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Product with ID $id not found.") }
 
-    // Mapper extension function for Product
-    private fun Product.toResponse() = ProductResponse(
-        id = this.id,
-        code = this.code,
-        name = this.name,
-        barcode = this.barcode,
-        cost = this.cost,
-        price = this.price,
-        isVariablePriced = this.isVariablePriced,
-        saleUnit = this.saleUnit.toResponse(),
-        purchaseUnit = this.purchaseUnit.toResponse(),
-        stockAlert = this.stockAlert,
-        category = this.category.toResponse(),
-        taxMethod = this.taxMethod,
-        image = this.image,
-        isActive = this.isActive,
-        note = this.note,
-        createdAt = this.createdAt,
-        updatedAt = this.updatedAt
-    )
 
-    fun searchProducts(query: String?, categoryId: Int?): List<ProductResponse> =
-        productRepository.searchAndFilter(query, categoryId).map { it.toResponse() }
+    fun searchProducts(query: String?, categoryId: Long?): List<ProductResponse> {
+       val products =  productRepository.searchAndFilter(query, categoryId)
+        if (products.isEmpty()) {
+            return emptyList()
+        }
+
+        val productIds = products.map { it.id }
+
+        val stocks = stockService.getStocksForProducts(productIds)
+
+        return products.map { it.toResponse(stocks[it.id]?.quantity ?: BigDecimal.ZERO) }
+    }
 }

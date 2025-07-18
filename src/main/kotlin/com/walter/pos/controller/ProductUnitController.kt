@@ -20,7 +20,7 @@ class ProductUnitController(private val unitService: ProductUnitService) {
         }
     }
     @GetMapping("/{id}")
-    fun getUnitById(@PathVariable id: Int): ProductUnitResponse = unitService.getUnitById(id)
+    fun getUnitById(@PathVariable id: Long): ProductUnitResponse = unitService.getUnitById(id)
 
     @PostMapping
     fun createUnit(@RequestBody request: ProductUnitRequest): ResponseEntity<ProductUnitResponse> {
@@ -29,10 +29,10 @@ class ProductUnitController(private val unitService: ProductUnitService) {
     }
 
     @PutMapping("/{id}")
-    fun updateUnit(@PathVariable id: Int, @RequestBody request: ProductUnitRequest): ProductUnitResponse =
+    fun updateUnit(@PathVariable id: Long, @RequestBody request: ProductUnitRequest): ProductUnitResponse =
         unitService.updateUnit(id, request)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteUnit(@PathVariable id: Int) = unitService.deleteUnit(id)
+    fun deleteUnit(@PathVariable id: Long) = unitService.deleteUnit(id)
 }

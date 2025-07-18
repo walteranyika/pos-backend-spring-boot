@@ -17,7 +17,7 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
     fun searchCategories(query: String): List<CategoryResponse> =
         categoryRepository.search(query).map { it.toResponse() }
 
-    fun getCategoryById(id: Int): CategoryResponse =
+    fun getCategoryById(id: Long): CategoryResponse =
         findCategoryById(id).toResponse()
 
 
@@ -26,21 +26,21 @@ class CategoryService(private val categoryRepository: CategoryRepository) {
         return categoryRepository.save(category).toResponse()
     }
 
-    fun updateCategory(id: Int, request: CategoryRequest): CategoryResponse {
+    fun updateCategory(id: Long, request: CategoryRequest): CategoryResponse {
         val category = findCategoryById(id)
         category.name = request.name
         category.code = request.code
         return categoryRepository.save(category).toResponse()
     }
 
-    fun deleteCategory(id: Int) {
+    fun deleteCategory(id: Long) {
         if (!categoryRepository.existsById(id)) {
             throw ResourceNotFoundException("Category with ID $id not found.")
         }
         categoryRepository.deleteById(id)
     }
 
-     fun findCategoryById(id: Int): Category =
+     fun findCategoryById(id: Long): Category =
         categoryRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Category with ID $id not found.") }
 

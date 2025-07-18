@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductUnitRepository : JpaRepository<ProductUnit, Int> {
+interface ProductUnitRepository : JpaRepository<ProductUnit, Long> {
     @Query("SELECT u FROM ProductUnit u WHERE lower(u.name) LIKE lower(concat('%', :query, '%')) OR lower(u.shortName) LIKE lower(concat('%', :query, '%'))")
     fun search(@Param("query") query: String): List<ProductUnit>
 }

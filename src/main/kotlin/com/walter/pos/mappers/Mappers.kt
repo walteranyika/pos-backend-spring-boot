@@ -2,14 +2,17 @@ package com.walter.pos.mappers
 
 import com.walter.pos.dtos.CategoryResponse
 import com.walter.pos.dtos.PaymentSaleResponse
+import com.walter.pos.dtos.ProductResponse
 import com.walter.pos.dtos.ProductUnitResponse
 import com.walter.pos.dtos.SaleDetailResponse
 import com.walter.pos.dtos.SaleResponse
 import com.walter.pos.entities.Category
 import com.walter.pos.entities.PaymentSale
+import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
 import com.walter.pos.entities.Sale
 import com.walter.pos.entities.SaleItem
+import java.math.BigDecimal
 
 fun Category.toResponse() = CategoryResponse(
     id = this.id,
@@ -52,4 +55,25 @@ fun Sale.toResponse() = SaleResponse(
     items = this.details.map { it.toResponse() },
     payments= this.payments.map {  it.toResponse() },
     createdAt = this.createdAt
+)
+
+fun Product.toResponse(quantity: BigDecimal= BigDecimal.ZERO) = ProductResponse(
+    id = this.id,
+    code = this.code,
+    name = this.name,
+    barcode = this.barcode,
+    cost = this.cost,
+    price = this.price,
+    isVariablePriced = this.isVariablePriced,
+    saleUnit = this.saleUnit.toResponse(),
+    purchaseUnit = this.purchaseUnit.toResponse(),
+    stockAlert = this.stockAlert,
+    category = this.category.toResponse(),
+    taxMethod = this.taxMethod,
+    image = this.image,
+    isActive = this.isActive,
+    note = this.note,
+    quantity = quantity,
+    createdAt = this.createdAt,
+    updatedAt = this.updatedAt
 )

@@ -1,40 +1,39 @@
 package com.walter.pos.entities
 
-import com.walter.pos.dtos.PaymentMethod
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Entity
-@Table(name = "payment_sales")
-data class PaymentSale(
+@Table(name = "purchases")
+data class Purchase(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    var amount: BigDecimal,
+    @Column(nullable = false, unique = true)
+    var ref: String,
 
-    @Enumerated(EnumType.STRING)
-    var method: PaymentMethod,
+    var supplier: String? = null,
 
-    val notes: String? = null,
+    @Column(nullable = false, precision = 10, scale = 2)
+    var totalCost: BigDecimal,
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    @CreationTimestamp
+    val purchaseDate: OffsetDateTime? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "sale_id", nullable = false)
-    val sale: Sale,
+    @OneToMany(mappedBy = "purchase", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val items: MutableList<PurchaseItem> = mutableListOf(),
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     var createdAt: LocalDateTime? = null,
 
+
     @UpdateTimestamp
     @Column(nullable = false)
     var updatedAt: LocalDateTime? = null
 )
-

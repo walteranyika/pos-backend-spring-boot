@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CategoryRepository : JpaRepository<Category, Int> {
+interface CategoryRepository : JpaRepository<Category, Long> {
     @Query("SELECT c FROM Category c WHERE lower(c.name) LIKE lower(concat('%', :query, '%')) OR lower(c.code) LIKE lower(concat('%', :query, '%'))")
     fun search(@Param("query") query: String): List<Category>
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 data class Category(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: Long = 0,
 
     var name: String,
 

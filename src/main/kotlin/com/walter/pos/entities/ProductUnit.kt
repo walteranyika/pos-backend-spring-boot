@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 data class ProductUnit(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: Long = 0,
 
     @Column(unique = true)
     var name: String,

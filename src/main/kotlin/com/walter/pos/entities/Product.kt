@@ -12,13 +12,13 @@ import java.time.LocalDateTime
 data class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: Long = 0,
 
     @Column(unique = true)
     var code: String,
 
     var name: String,
-    var barcode: String?=null,
+    var barcode: String? = null,
     var cost: BigDecimal,
     var price: BigDecimal,
     var isVariablePriced: Boolean,
@@ -32,19 +32,19 @@ data class Product(
     var purchaseUnit: ProductUnit,
 
 
-    var stockAlert: BigDecimal= BigDecimal.valueOf(0.0),
+    var stockAlert: BigDecimal = BigDecimal.valueOf(0.0),
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     var category: Category,
 
     @Enumerated(EnumType.STRING)
-    var taxMethod: TaxType= TaxType.INCLUSIVE,
+    var taxMethod: TaxType = TaxType.INCLUSIVE,
 
-    var image: String?=null,
+    var image: String? = null,
     var isActive: Boolean,
-    var note: String?=null,
-    val popularity: Int=0,
+    var note: String? = null,
+    val popularity: Int = 0,
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
