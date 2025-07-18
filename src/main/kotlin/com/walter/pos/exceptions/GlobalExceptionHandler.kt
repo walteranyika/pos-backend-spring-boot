@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.ServletWebRequest
@@ -42,6 +43,25 @@ class GlobalExceptionHandler {
             path = path
         )
         return ResponseEntity(errorDetails, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentialsException(
+        ex: BadCredentialsException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val path = (request as ServletWebRequest).request.requestURI
+
+        logger.warn("Wrong username or password'{}': {}", path, ex.message)
+
+        val errorDetails = ErrorResponse(
+            timestamp = LocalDateTime.now(),
+            status = HttpStatus.UNAUTHORIZED.value(),
+            error = "Bad credentials",
+            message = ex.message ?: "Wrong username or password.",
+            path = path
+        )
+        return ResponseEntity(errorDetails, HttpStatus.UNAUTHORIZED)
     }
 
     /**

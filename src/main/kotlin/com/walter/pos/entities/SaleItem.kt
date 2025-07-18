@@ -1,7 +1,5 @@
 package com.walter.pos.entities
 
-import com.walter.pos.dtos.PaymentStatus
-import com.walter.pos.dtos.TaxType
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -9,13 +7,11 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "sale_details")
-data class SaleDetail(
+@Table(name = "sale_items")
+data class SaleItem(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
-
-    val ref: String,
 
     val quantity: BigDecimal,
     val price: BigDecimal,

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/sales")
 class PosController(private val posService: PosService) {
 
-    @PostMapping("/create-pos")
+    @PostMapping
     fun createSale(
         @RequestBody request: CreateSaleRequest,
         @AuthenticationPrincipal user: User
     ): ResponseEntity<SaleResponse> {
         val saleResponse = posService.createSale(request, user)
-        return ResponseEntity(saleResponse, HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED).body(saleResponse)
     }
 }

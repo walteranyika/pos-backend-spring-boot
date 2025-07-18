@@ -60,9 +60,8 @@ class PosService(
         val saleDetailsToSave = request.items.map { itemRequest ->
             val product = productMap[itemRequest.productId]
                 ?: throw IllegalStateException("Product mapping failed, this should not happen.")
-            SaleDetail(
+            SaleItem(
                 sale = savedSale,
-                ref = ref,
                 product = product,
                 quantity = itemRequest.quantity,
                 price = itemRequest.price,
@@ -95,7 +94,7 @@ class PosService(
     }
 
     // Mapper extension functions to convert entities to DTOs
-    private fun Sale.toResponse(details: List<SaleDetail>, payments: List<PaymentSale>) = SaleResponse(
+    private fun Sale.toResponse(details: List<SaleItem>, payments: List<PaymentSale>) = SaleResponse(
         id = this.id,
         ref = this.ref,
         grandTotal = this.grandTotal,
@@ -109,7 +108,7 @@ class PosService(
         payments = payments.map { it.toResponse() }
     )
 
-    private fun SaleDetail.toResponse() = SaleDetailResponse(
+    private fun SaleItem.toResponse() = SaleDetailResponse(
         productName = this.product.name,
         quantity = this.quantity,
         price = this.price,

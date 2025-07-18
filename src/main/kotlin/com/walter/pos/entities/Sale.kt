@@ -1,7 +1,6 @@
 package com.walter.pos.entities
 
 import com.walter.pos.dtos.PaymentStatus
-import com.walter.pos.dtos.TaxType
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -27,6 +26,12 @@ data class Sale(
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
+
+    @OneToMany(mappedBy = "sale", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val details: List<SaleItem> = listOf(),
+
+    @OneToMany(mappedBy = "sale", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val payments: List<PaymentSale> = listOf(),
 
     val isCreditSale: Boolean=false,
 

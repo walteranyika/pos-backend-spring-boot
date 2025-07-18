@@ -52,5 +52,6 @@ data class SaleResponse(
     val cashier: String,
     val saleDate: LocalDateTime?,
     val items: List<SaleDetailResponse>,
-    val payments: List<PaymentSaleResponse>
+    val payments: List<PaymentSaleResponse>,
+    val createdAt: LocalDateTime? = null
 )
