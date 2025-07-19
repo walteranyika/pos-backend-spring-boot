@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(private val authenticationManager: AuthenticationManager, private val jwtService: JwtService) {
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> { val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(request.username, request.pin))
+    fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
+        val authentication = authenticationManager.authenticate(UsernamePasswordAuthenticationToken(request.username, request.pin))
 
         val user = authentication.principal as User
         val jwtToken = jwtService.generateToken(user)

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
+import java.sql.SQLIntegrityConstraintViolationException
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 
@@ -84,7 +85,7 @@ class GlobalExceptionHandler {
         return ResponseEntity(errorDetails, HttpStatus.FORBIDDEN)
     }
 
-
+//SQLIntegrityConstraintViolationException
     /**
      * Handles database integrity constraint violations, such as duplicate unique keys.
      * This handler is more robust as it catches Spring's generic `DataIntegrityViolationException`
