@@ -1,6 +1,5 @@
 package com.walter.pos.entities
 
-import com.walter.pos.dtos.Role
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -13,21 +12,28 @@ data class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val firstName: String,
-    val lastName: String,
+    val fullName: String,
 
     @Column(unique = true)
     private val username: String,
 
     private val pin: String,
 
-    @Enumerated(EnumType.STRING)
-    val role: Role
+    @ManyToMany(fetch = FetchType.EAGER) // Eager fetch is crucial for security
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")]
+    )
+    val roles: MutableSet<Role> = mutableSetOf()
 
 ) : UserDetails {
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf(SimpleGrantedAuthority(role.name))
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        // Authorities are the permissions granted to the user through their roles.
+        return roles.flatMap { it.permissions }
+            .map { SimpleGrantedAuthority(it.name) }
+            .toSet()
     }
 
     override fun getPassword(): String {

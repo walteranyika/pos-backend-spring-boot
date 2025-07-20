@@ -107,7 +107,7 @@ class PosService(
         paidAmount = this.paidAmount,
         paymentStatus = this.paymentStatus,
         isCreditSale = this.isCreditSale,
-        cashier = "${this.user.firstName} ${this.user.lastName}",
+        cashier = this.user.fullName,
         saleDate = this.createdAt,
         items = details.map { it.toResponse() },
         payments = payments.map { it.toResponse() }

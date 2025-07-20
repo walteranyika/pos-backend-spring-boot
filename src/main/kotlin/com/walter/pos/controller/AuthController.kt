@@ -23,11 +23,13 @@ class AuthController(private val authenticationManager: AuthenticationManager, p
 
         val user = authentication.principal as User
         val jwtToken = jwtService.generateToken(user)
+        val permissions = user.authorities.map { it.authority }.toSet()
 
         val response = LoginResponse(
             token = jwtToken,
-            firstName = user.firstName,
-            lastName = user.lastName
+            fullName = user.fullName,
+            username = user.username,
+            permissions = permissions
         )
 
         return ResponseEntity.ok(response)
