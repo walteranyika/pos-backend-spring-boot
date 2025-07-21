@@ -3,6 +3,8 @@ package com.walter.pos.controller
 import com.walter.pos.dtos.AssignRolesToUserRequest
 import com.walter.pos.dtos.CreateUserRequest
 import com.walter.pos.dtos.ResetPinRequest
+import com.walter.pos.dtos.UpdateUserRequest
+import com.walter.pos.dtos.UserResponse
 import com.walter.pos.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -35,4 +37,12 @@ class UserController(private val userService: UserService) {
         userService.resetPin(userId, request)
         return ResponseEntity.noContent().build()
     }
+
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    fun updateUser(@PathVariable userId: Long, @Valid @RequestBody request: UpdateUserRequest): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(userService.updateUser(userId, request))
+    }
+
+
 }

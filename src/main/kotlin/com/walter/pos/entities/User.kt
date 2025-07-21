@@ -12,10 +12,10 @@ data class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val fullName: String,
+    var fullName: String,
 
     @Column(unique = true)
-    private val username: String,
+    private var username: String,
 
     private var pin: String,
 
@@ -52,4 +52,11 @@ data class User(
     fun setPin(newPin: String) {
         this.pin = newPin
     }
+
+    fun updateUser(username: String, fullName: String) {
+        this.username = username
+        this.fullName = fullName
+    }
+
+
 }

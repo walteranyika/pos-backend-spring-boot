@@ -3,6 +3,7 @@ package com.walter.pos.service
 import com.walter.pos.dtos.AssignRolesToUserRequest
 import com.walter.pos.dtos.CreateUserRequest
 import com.walter.pos.dtos.ResetPinRequest
+import com.walter.pos.dtos.UpdateUserRequest
 import com.walter.pos.dtos.UserResponse
 import com.walter.pos.entities.User
 import com.walter.pos.repository.RoleRepository
@@ -69,6 +70,23 @@ class UserService(
         user.setPin(request.newPin)
 
         userRepository.save(user)
+    }
+
+
+    @Transactional
+    fun updateUser(userId: Long, request: UpdateUserRequest): UserResponse {
+        val user = userRepository.findById(userId)
+            .orElseThrow { EntityNotFoundException("User not found with ID: $userId") }
+
+        // Check for username uniqueness if it's being changed
+        if (user.username != request.username && userRepository.findByUsername(request.username).isPresent) {
+            throw IllegalStateException("Username '${request.username}' is already taken.")
+        }
+
+        user.updateUser(request.username, request.fullName)
+
+        val updatedUser = userRepository.save(user)
+        return updatedUser.toResponse()
     }
 
 
