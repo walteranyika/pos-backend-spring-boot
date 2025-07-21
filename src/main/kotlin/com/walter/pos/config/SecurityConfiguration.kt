@@ -1,9 +1,13 @@
 package com.walter.pos.config
 
 import com.walter.pos.filters.JwtAuthenticationFilter
+import com.walter.pos.filters.PinAuthenticationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.ProviderManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -14,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfiguration(
     private val jwtAuthFilter: JwtAuthenticationFilter,
-    private val authenticationProvider: AuthenticationProvider
+    private val pinAuthenticationProvider: PinAuthenticationProvider
 ) {
 
     @Bean
@@ -27,9 +31,15 @@ class SecurityConfiguration(
                     .anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authenticationProvider(authenticationProvider)
+            .authenticationProvider(pinAuthenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }
+
+    @Bean
+    fun authenticationManager(): AuthenticationManager{
+        return ProviderManager(pinAuthenticationProvider)
+    }
+
 }

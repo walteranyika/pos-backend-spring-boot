@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val roleRepository: RoleRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val roleRepository: RoleRepository
 ) {
 
     @Transactional
@@ -31,7 +30,7 @@ class UserService(
 
         val user = User(
             username = request.username,
-            pin = passwordEncoder.encode(request.password),
+            pin = request.password,
             fullName = request.fullName,
             roles = roles
         )

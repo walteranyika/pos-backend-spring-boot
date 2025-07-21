@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class DataSeeder(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
     private val permissionRepository: PermissionRepository,
     private val roleRepository: RoleRepository
 ) : CommandLineRunner {
@@ -101,7 +100,7 @@ class DataSeeder(
             val adminUser = User(
                 fullName = "Tom Heaton",
                 username = adminUsername,
-                pin = passwordEncoder.encode("1234"), // Default PIN/Password
+                pin = "1234", // Default PIN/Password
                 roles = mutableSetOf(adminRole)
             )
             userRepository.save(adminUser)
