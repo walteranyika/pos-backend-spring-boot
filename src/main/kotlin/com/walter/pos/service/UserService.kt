@@ -7,7 +7,6 @@ import com.walter.pos.entities.User
 import com.walter.pos.repository.RoleRepository
 import com.walter.pos.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

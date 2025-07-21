@@ -25,20 +25,6 @@ class ApplicationConfig(
         }
     }
 
-//    @Bean
-//    fun authenticationProvider(): AuthenticationProvider {
-//        val authProvider = DaoAuthenticationProvider()
-//        authProvider.setUserDetailsService(userDetailsService())
-//        authProvider.setPasswordEncoder(passwordEncoder())
-//        return authProvider
-//    }
-
-//    @Bean
-//    @Throws(Exception::class)
-//    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-//        return config.authenticationManager
-//    }
-
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
