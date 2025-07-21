@@ -2,6 +2,7 @@ package com.walter.pos.controller
 
 import com.walter.pos.dtos.AssignRolesToUserRequest
 import com.walter.pos.dtos.CreateUserRequest
+import com.walter.pos.dtos.ResetPinRequest
 import com.walter.pos.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -27,4 +28,11 @@ class UserController(private val userService: UserService) {
         @PathVariable userId: Long,
         @Valid @RequestBody request: AssignRolesToUserRequest
     ) = ResponseEntity.ok(userService.assignRolesToUser(userId, request))
+
+    @PostMapping("/{userId}/reset-pin")
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    fun resetPin(@PathVariable userId: Long, @Valid @RequestBody request: ResetPinRequest): ResponseEntity<Unit> {
+        userService.resetPin(userId, request)
+        return ResponseEntity.noContent().build()
+    }
 }

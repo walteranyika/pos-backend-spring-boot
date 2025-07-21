@@ -17,7 +17,7 @@ data class User(
     @Column(unique = true)
     private val username: String,
 
-    private val pin: String,
+    private var pin: String,
 
     @ManyToMany(fetch = FetchType.EAGER) // Eager fetch is crucial for security
     @JoinTable(
@@ -48,4 +48,8 @@ data class User(
     override fun isAccountNonLocked(): Boolean = true
     override fun isCredentialsNonExpired(): Boolean = true
     override fun isEnabled(): Boolean = true
+
+    fun setPin(newPin: String) {
+        this.pin = newPin
+    }
 }

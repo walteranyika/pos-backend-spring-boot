@@ -2,6 +2,7 @@ package com.walter.pos.service
 
 import com.walter.pos.dtos.AssignRolesToUserRequest
 import com.walter.pos.dtos.CreateUserRequest
+import com.walter.pos.dtos.ResetPinRequest
 import com.walter.pos.dtos.UserResponse
 import com.walter.pos.entities.User
 import com.walter.pos.repository.RoleRepository
@@ -56,6 +57,20 @@ class UserService(
     fun getAllUsers(): List<UserResponse> {
         return userRepository.findAll().map { it.toResponse() }
     }
+
+    /**
+     * Finds a user by their ID and resets their PIN.
+     * The new PIN is encoded before being saved.
+     */
+    @Transactional
+    fun resetPin(userId: Long, request: ResetPinRequest) {
+        val user = userRepository.findById(userId)
+            .orElseThrow { EntityNotFoundException("User not found with ID: $userId") }
+        user.setPin(request.newPin)
+
+        userRepository.save(user)
+    }
+
 
     private fun User.toResponse() = UserResponse(
         id = this.id,

@@ -11,3 +11,7 @@ data class LoginResponse(
     val username: String,
     val permissions: Set<String>
 )
+
+data class ResetPinRequest(
+    val newPin: String
+)
