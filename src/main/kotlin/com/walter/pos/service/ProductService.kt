@@ -5,6 +5,7 @@ import com.walter.pos.dtos.CategoryResponse
 import com.walter.pos.dtos.ProductRequest
 import com.walter.pos.dtos.ProductResponse
 import com.walter.pos.dtos.ProductUnitResponse
+import com.walter.pos.dtos.ReorderItemResponse
 import com.walter.pos.entities.Category
 import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
@@ -124,5 +125,10 @@ class ProductService(
         val stocks = stockService.getStocksForProducts(productIds)
 
         return products.map { it.toResponse(stocks[it.id]?.quantity ?: BigDecimal.ZERO) }
+    }
+
+    fun getReorderAlertItems(): List<ReorderItemResponse> {
+        val reorderItems = productRepository.findProductsForReOrder()
+        return reorderItems
     }
 }
