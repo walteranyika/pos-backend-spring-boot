@@ -17,6 +17,7 @@ data class User(
     @Column(unique = true)
     private var username: String,
 
+    @Column(unique = true)
     private var pin: String,
 
     @ManyToMany(fetch = FetchType.EAGER) // Eager fetch is crucial for security

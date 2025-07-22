@@ -8,9 +8,11 @@ import com.walter.pos.dtos.ProductUnitResponse
 import com.walter.pos.entities.Category
 import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
+import com.walter.pos.entities.Stock
 import com.walter.pos.exceptions.ResourceNotFoundException
 import com.walter.pos.mappers.toResponse
 import com.walter.pos.repository.ProductRepository
+import com.walter.pos.repository.StockRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -21,6 +23,7 @@ class ProductService(
     private val categoryService: CategoryService, // Reuse other services to find entities
     private val unitService: ProductUnitService,
     private val stockService: StockService,
+    private val stockRepository: StockRepository
 ) {
 
     fun getAllProducts(): List<ProductResponse> {
@@ -63,6 +66,12 @@ class ProductService(
         )
         val savedProduct = productRepository.save(product)
         stockService.createInitialStockForProduct(product)
+        // 2. Automatically create the corresponding stock record
+        val initialStock = Stock(
+            product = savedProduct,
+            quantity = BigDecimal.ZERO // Initialize with quantity 0
+        )
+        stockRepository.save(initialStock)
         return savedProduct.toResponse()
     }
 
