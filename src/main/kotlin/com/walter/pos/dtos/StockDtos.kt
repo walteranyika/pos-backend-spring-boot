@@ -23,3 +23,10 @@ data class ReorderItemResponse(
     val stockAlertLevel: BigDecimal,
     val saleUnitName: String
 )
+
+data class BulkImportResponse(
+    val totalRecords: Int,
+    val successfulImports: Int,
+    val failedImports: Int,
+    val errors: List<String>
+)

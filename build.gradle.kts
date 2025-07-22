@@ -40,6 +40,8 @@ dependencies {
 
 	implementation("jakarta.validation:jakarta.validation-api:3.1.1")
 
+	implementation("org.apache.commons:commons-csv:1.10.0")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	annotationProcessor("org.projectlombok:lombok")

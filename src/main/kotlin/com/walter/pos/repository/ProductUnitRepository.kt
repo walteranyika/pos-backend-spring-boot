@@ -13,4 +13,6 @@ interface ProductUnitRepository : JpaRepository<ProductUnit, Long> {
     fun search(@Param("query") query: String): List<ProductUnit>
 
     fun findByName(name: String): Optional<ProductUnit>
+
+    fun findByShortName(shortName: String) : Optional<ProductUnit>
 }
