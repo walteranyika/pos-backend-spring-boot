@@ -8,19 +8,21 @@ import java.time.LocalDateTime
 
 data class HoldOrderRequest(
     @field:NotEmpty
-    val items: List<@Valid HoldOrderItemRequest>
+    val items: List<@Valid HoldOrderItemRequest>,
+    val customerId: Long
 )
 
 data class HoldOrderItemRequest(
     @field:NotNull
     val productId: Long,
     @field:NotNull
-    val quantity: BigDecimal
+    val quantity: BigDecimal,
 )
 
 // Response for a single held order
 data class HeldOrderResponse(
     val id: Long,
+    val customerId: Long,
     val ref: String,
     val items: List<HeldOrderItemResponse>,
     val createdAt: LocalDateTime?=null

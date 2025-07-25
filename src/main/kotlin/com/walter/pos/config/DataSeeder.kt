@@ -20,7 +20,8 @@ class DataSeeder(
     private val unitRepository: ProductUnitRepository,
     private val productRepository: ProductRepository,
 
-    private val stockRepository: StockRepository
+    private val stockRepository: StockRepository,
+    private val customerRepository: CustomerRepository,
 ) : CommandLineRunner {
     private val logger = LoggerFactory.getLogger(DataSeeder::class.java)
 
@@ -33,6 +34,7 @@ class DataSeeder(
         seedAdminUser(adminRole)
         seedCategoriesAndUnits()
         seedProducts()
+        seedDefaultCustomer()
 
         logger.info("Data seeding process finished successfully.")
     }
@@ -110,6 +112,18 @@ class DataSeeder(
             )
             userRepository.save(adminUser)
             logger.info("Default admin user created with username '{}' and default PIN.", adminUsername)
+        }
+    }
+
+    private fun seedDefaultCustomer(){
+        val walkInCustomer = "Walk-in Customer"
+        if (customerRepository.findByName(walkInCustomer).isEmpty){
+            logger.info("Seeding default customer")
+            val customer= Customer(
+                name = walkInCustomer,
+                phoneNumber = "0711111111"
+            )
+            customerRepository.save(customer)
         }
     }
 

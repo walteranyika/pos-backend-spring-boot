@@ -8,6 +8,9 @@ import com.walter.pos.dtos.SaleResponse
 import com.walter.pos.entities.HeldOrder
 import com.walter.pos.entities.HeldOrderItem
 import com.walter.pos.entities.User
+import com.walter.pos.exceptions.ResourceNotFoundException
+import com.walter.pos.mappers.toResponse
+import com.walter.pos.repository.CustomerRepository
 import com.walter.pos.repository.HeldOrderRepository
 import com.walter.pos.repository.ProductRepository
 import com.walter.pos.repository.UserRepository
@@ -22,15 +25,22 @@ class HeldOrderService(
     private val heldOrderRepository: HeldOrderRepository,
     private val productRepository: ProductRepository,
     private val userRepository: UserRepository,
+    private val customerRepository: CustomerRepository,
     private val saleService: PosService // To convert held order to a sale
 ) {
 
     @Transactional
     fun createHeldOrder(request: HoldOrderRequest): HeldOrderResponse {
         val currentUser = getCurrentUser()
+
+        val customer= customerRepository.findById(request.customerId).orElseThrow{
+            ResourceNotFoundException("Customer not found with ID: ${request.customerId}")
+        }
+
         val heldOrder = HeldOrder(
             ref = "HELD-${System.currentTimeMillis()}",
-            user = currentUser
+            user = currentUser,
+            customer = customer
         )
 
         val items = request.items.map { itemRequest ->
@@ -124,18 +134,4 @@ class HeldOrderService(
         }
         return heldOrder
     }
-
-    // Extension function for clean mapping
-    private fun HeldOrder.toResponse(): HeldOrderResponse = HeldOrderResponse(
-        id = this.id,
-        ref = this.ref,
-        items = this.items.map {
-            HeldOrderItemResponse(
-                productId = it.product.id,
-                productName = it.product.name,
-                quantity = it.quantity,
-                price = it.price
-            )
-        }
-    )
 }

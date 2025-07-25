@@ -1,5 +1,6 @@
 package com.walter.pos.dtos
 
+import com.walter.pos.entities.Customer
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -22,7 +23,8 @@ data class CreateSaleRequest(
     val items: List<SaleItemRequest>,
     val payments: List<PaymentRequest>,
     val discount: BigDecimal = BigDecimal.ZERO, // An overall discount on the entire sale
-    val isCreditSale: Boolean = false
+    val isCreditSale: Boolean = false,
+    val customerId: Long
 )
 
 // --- Response DTOs ---
@@ -50,6 +52,7 @@ data class SaleResponse(
     val paymentStatus: PaymentStatus,
     val isCreditSale: Boolean,
     val cashier: String,
+    val customer: CustomerResponse,
     val saleDate: LocalDateTime?,
     val items: List<SaleDetailResponse>,
     val payments: List<PaymentSaleResponse>,

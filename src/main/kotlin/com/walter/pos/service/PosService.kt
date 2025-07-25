@@ -3,6 +3,8 @@ package com.walter.pos.service
 import com.walter.pos.dtos.*
 import com.walter.pos.entities.*
 import com.walter.pos.exceptions.ResourceNotFoundException
+import com.walter.pos.mappers.toResponse
+import com.walter.pos.repository.CustomerRepository
 import com.walter.pos.repository.PaymentSaleRepository
 import com.walter.pos.repository.ProductRepository
 import com.walter.pos.repository.SaleDetailRepository
@@ -15,6 +17,7 @@ import java.math.BigDecimal
 class PosService(
     private val productRepository: ProductRepository,
     private val saleRepository: SaleRepository,
+    private val customerRepository: CustomerRepository,
     private val saleDetailRepository: SaleDetailRepository,
     private val paymentSaleRepository: PaymentSaleRepository,
     private val stockService: StockService
@@ -45,6 +48,10 @@ class PosService(
             else -> PaymentStatus.UNPAID
         }
 
+        val customer= customerRepository.findById(request.customerId).orElseThrow{
+            ResourceNotFoundException("Customer not found with ID: ${request.customerId}")
+        }
+
         // 3. Create and save the main Sale entity
         val sale = Sale(
             ref = ref,
@@ -53,7 +60,8 @@ class PosService(
             discount = request.discount,
             paidAmount = paidAmount,
             paymentStatus = paymentStatus,
-            isCreditSale = request.isCreditSale
+            isCreditSale = request.isCreditSale,
+            customer = customer
         )
         val savedSale = saleRepository.save(sale)
 
@@ -110,7 +118,8 @@ class PosService(
         cashier = this.user.fullName,
         saleDate = this.createdAt,
         items = details.map { it.toResponse() },
-        payments = payments.map { it.toResponse() }
+        payments = payments.map { it.toResponse() },
+        customer = this.customer.toResponse()
     )
 
     private fun SaleItem.toResponse() = SaleDetailResponse(

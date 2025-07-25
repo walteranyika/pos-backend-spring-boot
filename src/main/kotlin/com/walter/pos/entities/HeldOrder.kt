@@ -5,7 +5,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "held_orders")
@@ -20,6 +19,11 @@ data class HeldOrder(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    val customer: Customer,
+
 
     @OneToMany(mappedBy = "heldOrder", cascade = [CascadeType.ALL], orphanRemoval = true)
     val items: MutableList<HeldOrderItem> = mutableListOf(),

@@ -27,6 +27,10 @@ data class Sale(
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    val customer: Customer,
+
     @OneToMany(mappedBy = "sale", cascade = [CascadeType.ALL], orphanRemoval = true)
     val details: List<SaleItem> = listOf(),
 

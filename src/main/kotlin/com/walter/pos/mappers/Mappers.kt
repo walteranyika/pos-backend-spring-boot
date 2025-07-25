@@ -1,12 +1,17 @@
 package com.walter.pos.mappers
 
 import com.walter.pos.dtos.CategoryResponse
+import com.walter.pos.dtos.CustomerResponse
+import com.walter.pos.dtos.HeldOrderItemResponse
+import com.walter.pos.dtos.HeldOrderResponse
 import com.walter.pos.dtos.PaymentSaleResponse
 import com.walter.pos.dtos.ProductResponse
 import com.walter.pos.dtos.ProductUnitResponse
 import com.walter.pos.dtos.SaleDetailResponse
 import com.walter.pos.dtos.SaleResponse
 import com.walter.pos.entities.Category
+import com.walter.pos.entities.Customer
+import com.walter.pos.entities.HeldOrder
 import com.walter.pos.entities.PaymentSale
 import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
@@ -51,6 +56,7 @@ fun Sale.toResponse() = SaleResponse(
     paymentStatus=this.paymentStatus,
     isCreditSale=this.isCreditSale,
     cashier=this.user.username,
+    customer=this.customer.toResponse(),
     saleDate=this.createdAt,
     items = this.details.map { it.toResponse() },
     payments= this.payments.map {  it.toResponse() },
@@ -76,4 +82,26 @@ fun Product.toResponse(quantity: BigDecimal= BigDecimal.ZERO) = ProductResponse(
     quantity = quantity,
     createdAt = this.createdAt,
     updatedAt = this.updatedAt
+)
+
+fun Customer.toResponse(): CustomerResponse {
+    return CustomerResponse(
+        id = this.id,
+        name = this.name,
+        phoneNumber = this.phoneNumber
+    )
+}
+
+fun HeldOrder.toResponse(): HeldOrderResponse = HeldOrderResponse(
+    id = this.id,
+    ref = this.ref,
+    customerId = this.customer.id,
+    items = this.items.map {
+        HeldOrderItemResponse(
+            productId = it.product.id,
+            productName = it.product.name,
+            quantity = it.quantity,
+            price = it.price
+        )
+    }
 )
