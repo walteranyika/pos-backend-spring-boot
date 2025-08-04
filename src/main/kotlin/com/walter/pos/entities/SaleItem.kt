@@ -13,9 +13,16 @@ data class SaleItem(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
+    @Column(precision = 10, scale = 5, nullable = false)
     val quantity: BigDecimal,
+
+    @Column(precision = 10, scale = 2, nullable = false)
     val price: BigDecimal,
+
+    @Column(precision = 10, scale = 2, nullable = false)
     val discount: BigDecimal=0.toBigDecimal(),
+
+    @Column(precision = 10, scale = 5, nullable = false)
     val total: BigDecimal,
 
 
