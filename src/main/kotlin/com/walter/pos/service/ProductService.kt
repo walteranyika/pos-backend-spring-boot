@@ -80,7 +80,7 @@ class ProductService(
             note = request.note
         )
         val savedProduct = productRepository.save(product)
-        stockService.createInitialStockForProduct(product)
+        //stockService.createInitialStockForProduct(product)
         // 2. Automatically create the corresponding stock record
         val initialStock = Stock(
             product = savedProduct,
