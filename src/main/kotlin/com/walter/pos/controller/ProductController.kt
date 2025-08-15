@@ -1,8 +1,11 @@
 package com.walter.pos.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.walter.pos.dtos.ProductRequest
 import com.walter.pos.dtos.ProductResponse
 import com.walter.pos.service.ProductService
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -11,7 +14,8 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/products")
-class ProductController(private val productService: ProductService) {
+class ProductController(private val productService: ProductService,
+    private val objectMapper: ObjectMapper) {
 
     @GetMapping
     fun getProducts(
@@ -24,15 +28,34 @@ class ProductController(private val productService: ProductService) {
     @GetMapping("/{id}")
     fun getProductById(@PathVariable id: Long): ProductResponse = productService.getProductById(id)
 
-    @PostMapping
-    fun createProduct(@RequestBody request: ProductRequest): ResponseEntity<ProductResponse> {
-        val product = productService.createProduct(request)
+    @PostMapping(consumes = ["multipart/form-data"])
+    @PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
+    fun createProduct(@RequestPart("product") productRequestJson: String,
+                      @RequestPart("image", required = false) imageFile: MultipartFile?): ResponseEntity<ProductResponse> {
+        val request = objectMapper.readValue(productRequestJson, ProductRequest::class.java)
+        val product = productService.createProduct(request, imageFile)
         return ResponseEntity(product, HttpStatus.CREATED)
     }
 
     @PutMapping("/{id}")
-    fun updateProduct(@PathVariable id: Long, @RequestBody request: ProductRequest): ProductResponse =
-        productService.updateProduct(id, request)
+    @PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
+    fun updateProduct(@PathVariable id: Long,
+                            @RequestPart("product") productRequestJson: String,
+                           @RequestPart("image", required = false) imageFile: MultipartFile?): ProductResponse {
+
+        val request = objectMapper.readValue(productRequestJson, ProductRequest::class.java)
+        return  productService.updateProduct(id, request, imageFile)
+    }
+
+
+    @GetMapping("/images/{filename:.+}")
+    @ResponseBody
+    fun serveFile(@PathVariable filename: String): ResponseEntity<Resource> {
+        val file = productService.loadImageAsResource(filename)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"${file.filename}\"")
+            .body(file)
+    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -51,8 +74,6 @@ class ProductController(private val productService: ProductService) {
         if (file.isEmpty) {
             return ResponseEntity.badRequest().body("Please upload a CSV file.")
         }
-        // You might want to add more validation for file type (e.g., text/csv)
-
         val result = productService.importProductsFromCsv(file)
 
         return if (result.failedImports > 0) {

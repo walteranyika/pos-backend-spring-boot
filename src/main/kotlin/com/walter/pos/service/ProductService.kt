@@ -2,15 +2,11 @@ package com.walter.pos.service
 
 
 import com.walter.pos.dtos.BulkImportResponse
-import com.walter.pos.dtos.CategoryResponse
 import com.walter.pos.dtos.ProductRequest
 import com.walter.pos.dtos.ProductResponse
-import com.walter.pos.dtos.ProductUnitResponse
 import com.walter.pos.dtos.ReorderItemResponse
 import com.walter.pos.dtos.TaxType
-import com.walter.pos.entities.Category
 import com.walter.pos.entities.Product
-import com.walter.pos.entities.ProductUnit
 import com.walter.pos.entities.Stock
 import com.walter.pos.exceptions.ResourceNotFoundException
 import com.walter.pos.mappers.toResponse
@@ -22,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -37,7 +34,8 @@ class ProductService(
     private val stockService: StockService,
     private val stockRepository: StockRepository,
     private val categoryRepository: CategoryRepository,
-    private val unitRepository: ProductUnitRepository
+    private val unitRepository: ProductUnitRepository,
+    private val fileStorageService: FileStorageService
 ) {
     private val logger = LoggerFactory.getLogger(ProductService::class.java)
 
@@ -57,11 +55,16 @@ class ProductService(
     fun getProductById(id: Long): ProductResponse = findProductById(id).toResponse()
 
     @Transactional
-    fun createProduct(request: ProductRequest): ProductResponse {
+    fun createProduct(request: ProductRequest, imageFile: MultipartFile?): ProductResponse {
         // Find the related entities using their respective services
         val category = categoryService.findCategoryById(request.categoryId)
         val saleUnit = unitService.findUnitById(request.saleUnitId)
         val purchaseUnit = unitService.findUnitById(request.purchaseUnitId)
+
+        var imagePath: String? = null
+        if (imageFile!= null && !imageFile.isEmpty){
+            imagePath = fileStorageService.store(imageFile)
+        }
 
         val product = Product(
             code = request.code,
@@ -75,7 +78,7 @@ class ProductService(
             stockAlert = request.stockAlert,
             category = category,
             taxMethod = request.taxMethod,
-            image = request.image,
+            image = imagePath,
             isActive = request.isActive,
             note = request.note
         )
@@ -91,11 +94,22 @@ class ProductService(
     }
 
     @Transactional
-    fun updateProduct(id: Long, request: ProductRequest): ProductResponse {
+    fun updateProduct(id: Long, request: ProductRequest, imageFile: MultipartFile?): ProductResponse {
         val product = findProductById(id)
         val category = categoryService.findCategoryById(request.categoryId)
         val saleUnit = unitService.findUnitById(request.saleUnitId)
         val purchaseUnit = unitService.findUnitById(request.purchaseUnitId)
+
+        val oldImagePath = product.image
+
+        if (imageFile != null && !imageFile.isEmpty) {
+            // A new image is being uploaded, store it first.
+            val newImagePath = fileStorageService.store(imageFile)
+            product.image = newImagePath
+            // After successfully storing the new image, delete the old one.
+            fileStorageService.delete(oldImagePath)
+        }
+
         // Update the product fields
         product.apply {
             this.code = request.code
@@ -108,7 +122,6 @@ class ProductService(
             this.stockAlert = request.stockAlert
             this.category = category
             this.taxMethod = request.taxMethod
-            this.image = request.image
             this.isActive = request.isActive
             this.note = request.note
         }
@@ -213,10 +226,15 @@ class ProductService(
 
 
     fun deleteProduct(id: Long) {
-        if (!productRepository.existsById(id)) {
-            throw ResourceNotFoundException("Product with ID $id not found.")
-        }
-        productRepository.deleteById(id)
+        val product = productRepository.findById(id)
+            .orElseThrow { EntityNotFoundException("Product with id $id not found") }
+
+        // Delete the associated image file from storage first.
+        fileStorageService.delete(product.image)
+
+        // Then delete the database records.
+       // stockRepository.deleteByProduct(product)
+        productRepository.delete(product)
     }
 
     private fun findProductById(id: Long): Product =
@@ -240,5 +258,10 @@ class ProductService(
     fun getReorderAlertItems(): List<ReorderItemResponse> {
         val reorderItems = productRepository.findProductsForReOrder()
         return reorderItems
+    }
+
+
+    fun loadImageAsResource(filename: String): Resource {
+        return fileStorageService.loadAsResource(filename)
     }
 }

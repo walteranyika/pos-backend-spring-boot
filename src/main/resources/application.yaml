@@ -1,0 +1,27 @@
+application:
+  security:
+    jwt:
+      secret-key: 432A462D4A614E645267556B58703273357638792F423F4528482B4D62516554
+      expiration: '86400000'
+spring:
+  application:
+    name: POS-BE
+  servlet:
+    multipart:
+      max-file-size: 100KB
+      enabled: true
+      max-request-size: 200KB
+  datasource:
+    url: jdbc:mysql://localhost:3306/pos_db?createDatabaseIfNotExist=true
+    password: root
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+server:
+  servlet:
+    context-path: /api/pos
+  port: '9000'
+file:
+  upload-dir: ./uploads/images

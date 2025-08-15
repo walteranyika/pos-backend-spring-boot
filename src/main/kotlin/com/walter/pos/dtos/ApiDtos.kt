@@ -65,7 +65,6 @@ data class ProductRequest(
     val stockAlert: BigDecimal,
     val categoryId: Long,
     val taxMethod: TaxType,
-    val image: String?,
     val isActive: Boolean,
     val note: String?
 )
