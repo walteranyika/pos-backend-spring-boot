@@ -23,9 +23,10 @@ data class HoldOrderItemRequest(
 data class HeldOrderResponse(
     val id: Long,
     val customerId: Long,
+    val customerName: String,
     val ref: String,
     val items: List<HeldOrderItemResponse>,
-    val createdAt: LocalDateTime?=null
+    val createdAt: String?=null
 )
 
 data class HeldOrderItemResponse(

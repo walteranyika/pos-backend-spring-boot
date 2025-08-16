@@ -17,7 +17,10 @@ import com.walter.pos.entities.Product
 import com.walter.pos.entities.ProductUnit
 import com.walter.pos.entities.Sale
 import com.walter.pos.entities.SaleItem
+import com.walter.pos.utils.DateUtils
 import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 fun Category.toResponse() = CategoryResponse(
     id = this.id,
@@ -96,6 +99,7 @@ fun HeldOrder.toResponse(): HeldOrderResponse = HeldOrderResponse(
     id = this.id,
     ref = this.ref,
     customerId = this.customer.id,
+    customerName = this.customer.name,
     items = this.items.map {
         HeldOrderItemResponse(
             productId = it.product.id,
@@ -103,5 +107,6 @@ fun HeldOrder.toResponse(): HeldOrderResponse = HeldOrderResponse(
             quantity = it.quantity,
             price = it.price
         )
-    }
+    },
+    createdAt = DateUtils.convertToStandard(this.createdAt)
 )

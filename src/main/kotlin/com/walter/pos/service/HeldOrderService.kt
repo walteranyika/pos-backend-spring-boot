@@ -85,7 +85,7 @@ class HeldOrderService(
     @Transactional(readOnly = true)
     fun getHeldOrdersForCurrentUser(): List<HeldOrderResponse> {
         val currentUser = getCurrentUser()
-        return heldOrderRepository.findByUserId(currentUser.id).map { it.toResponse() }
+        return heldOrderRepository.findByUserIdOrderByIdDesc(currentUser.id).map { it.toResponse() }
     }
 
     @Transactional
