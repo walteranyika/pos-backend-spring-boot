@@ -77,6 +77,7 @@ fun Product.toResponse(quantity: BigDecimal= BigDecimal.ZERO) = ProductResponse(
     saleUnit = this.saleUnit.toResponse(),
     purchaseUnit = this.purchaseUnit.toResponse(),
     stockAlert = this.stockAlert,
+    popularity = this.popularity,
     category = this.category.toResponse(),
     taxMethod = this.taxMethod,
     image = this.image,

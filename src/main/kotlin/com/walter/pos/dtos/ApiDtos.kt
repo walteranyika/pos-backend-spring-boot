@@ -44,6 +44,7 @@ data class ProductResponse(
     val purchaseUnit: ProductUnitResponse,
     val stockAlert: BigDecimal,
     val quantity: BigDecimal,
+    val popularity: BigDecimal,
     val category: CategoryResponse,
     val taxMethod: TaxType,
     val image: String?,
@@ -67,4 +68,10 @@ data class ProductRequest(
     val taxMethod: TaxType,
     val isActive: Boolean,
     val note: String?
+)
+
+
+data class ProductPopularityDto(
+    val productId: Long,
+    val score: BigDecimal
 )

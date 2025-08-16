@@ -44,7 +44,10 @@ data class Product(
     var image: String? = null,
     var isActive: Boolean,
     var note: String? = null,
-    val popularity: Int = 0,
+
+    @Column(name = "popularity", nullable = false, columnDefinition = "DECIMAL(19, 4) default 0.00")
+    @field:org.hibernate.annotations.ColumnDefault("0.00")
+    var popularity: BigDecimal = BigDecimal.ZERO,
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
